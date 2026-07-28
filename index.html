@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bakusou Kyoudai Let's & Go!! - Premium Web Game</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="icon" href="icon/1785274178813.png" type="image/png">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #090e17;
+            --primary: #3b82f6;
+            --primary-glow: rgba(59, 130, 246, 0.5);
+            --accent: #ef4444;
+            --text-main: #f8fafc;
+            --text-muted: #64748b;
+            --glass-bg: rgba(15, 23, 42, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            
+            /* Neumorphism Palette */
+            --shadow-light: rgba(255, 255, 255, 0.03);
+            --shadow-dark: rgba(0, 0, 0, 0.6);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-image: 
+                radial-gradient(circle at 10% 10%, rgba(59, 130, 246, 0.1), transparent 30%),
+                radial-gradient(circle at 90% 90%, rgba(239, 68, 68, 0.1), transparent 30%);
+        }
+
+        /* --- UI Containers --- */
+        .screen {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: scale(0.95);
+            z-index: 10;
+        }
+
+        .screen.active {
+            opacity: 1;
+            pointer-events: auto;
+            transform: scale(1);
+        }
+
+        /* Splash Screen Khusus untuk Start Audio */
+        #screen-splash {
+            z-index: 100;
+            background: var(--bg-dark);
+            cursor: pointer;
+        }
+
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 50px;
+            box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.6);
+            text-align: center;
+            width: 90%;
+            max-width: 850px;
+            max-height: 90vh;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .glass-panel::-webkit-scrollbar { width: 6px; }
+        .glass-panel::-webkit-scrollbar-track { background: transparent; }
+        .glass-panel::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 10px; }
+
+        h1 { font-weight: 800; font-size: 3.5rem; line-height: 1.1; letter-spacing: 1px; }
+        h2 { font-weight: 800; font-size: 2rem; letter-spacing: 1px; margin-bottom: 20px;}
+        h3 { font-weight: 700; font-size: 1rem; letter-spacing: 2px; text-transform: uppercase; }
+        p { font-weight: 300; font-size: 1.1rem; line-height: 1.6; }
+
+        .title-gradient {
+            background: linear-gradient(135deg, #60a5fa, #3b82f6, #ef4444);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+        }
+
+        /* --- Premium Buttons --- */
+        .btn-depth {
+            appearance: none;
+            border: none;
+            background: rgba(30, 41, 59, 0.5);
+            color: var(--text-main);
+            padding: 14px 28px;
+            font-size: 1rem;
+            font-weight: 700;
+            border-radius: 14px;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+            box-shadow: 
+                6px 6px 16px var(--shadow-dark), 
+                -4px -4px 12px var(--shadow-light),
+                inset 0 0 0 transparent;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin: 10px;
+            outline: none;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .btn-depth:hover {
+            color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 
+                8px 8px 20px var(--shadow-dark), 
+                -6px -6px 16px var(--shadow-light);
+        }
+
+        .btn-depth:active, .btn-depth.selected {
+            box-shadow: 
+                0 0 0 transparent, 
+                inset 6px 6px 12px rgba(0,0,0,0.4), 
+                inset -4px -4px 10px rgba(255,255,255,0.05);
+            transform: translateY(1px);
+            color: var(--primary);
+            background: rgba(15, 23, 42, 0.8);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-depth.action {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            box-shadow: 
+                0 10px 25px rgba(37, 99, 235, 0.4),
+                inset 2px 2px 5px rgba(255, 255, 255, 0.2);
+            border: none;
+        }
+
+        .btn-depth.action:hover {
+            box-shadow: 0 15px 35px rgba(37, 99, 235, 0.6);
+            transform: translateY(-3px);
+        }
+
+        /* --- Audio Toggle Button --- */
+        #audio-toggle {
+            position: fixed;
+            top: 25px;
+            right: 25px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            padding: 0;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2rem;
+            z-index: 90;
+        }
+
+        /* --- Grids & Cards (Car Selection Images) --- */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 25px;
+            width: 100%;
+            margin: 20px 0 30px 0;
+        }
+
+        .card {
+            background: rgba(30, 41, 59, 0.3);
+            border-radius: 20px;
+            padding: 25px 20px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(255,255,255,0.05);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .card img {
+            width: 100%;
+            height: 120px;
+            object-fit: contain;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 15px 15px rgba(0,0,0,0.6));
+            transition: transform 0.4s ease;
+            z-index: 2;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 20%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px; height: 80px;
+            border-radius: 50%;
+            background: var(--primary);
+            filter: blur(40px);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: 1;
+        }
+
+        .card h3 { color: #e2e8f0; margin-bottom: 15px; font-size: 1.1rem; z-index: 2; position: relative;}
+        
+        .card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(59, 130, 246, 0.2);
+            background: rgba(30, 41, 59, 0.5);
+        }
+        .card:hover img { transform: scale(1.15) rotate(-3deg); }
+        .card:hover::before { opacity: 0.3; }
+
+        .card.selected {
+            border-color: var(--primary);
+            background: linear-gradient(180deg, rgba(59, 130, 246, 0.1), rgba(15, 23, 42, 0.6));
+            box-shadow: 0 0 25px var(--primary-glow);
+        }
+        .card.selected::before { opacity: 0.6; }
+
+        /* --- Parts Selection CSS --- */
+        .parts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 15px;
+            width: 100%;
+            margin-bottom: 25px;
+        }
+        .part-card {
+            background: rgba(30, 41, 59, 0.4);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+        .part-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(59, 130, 246, 0.5);
+        }
+        .part-card.selected {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(15, 23, 42, 0.8));
+            border-color: var(--primary);
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+        .part-card h4 {
+            color: #f8fafc; margin-bottom: 8px; font-size: 1rem;
+        }
+        .part-card p {
+            font-size: 0.8rem; color: var(--text-muted); line-height: 1.4;
+        }
+        .part-indicator {
+            position: absolute; top: 0; left: 0; width: 4px; height: 100%;
+        }
+
+        /* Stats bar */
+        .stats { width: 100%; font-size: 0.75rem; color: var(--text-muted); font-weight: 500; text-align: left; text-transform: uppercase; letter-spacing: 1px; z-index: 2; position: relative;}
+        .stat-bar { height: 4px; background: rgba(0,0,0,0.5); border-radius: 2px; margin: 6px 0 12px 0; overflow: hidden; }
+        .stat-fill { height: 100%; border-radius: 2px; }
+
+        /* Track Cards */
+        .track-card {
+            height: 100px;
+            justify-content: center;
+            font-size: 1.1rem;
+            position: relative;
+            overflow: hidden;
+            padding: 0;
+            border-radius: 16px;
+        }
+        .track-preview {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            opacity: 0.4; transition: opacity 0.4s, transform 0.4s;
+        }
+        .track-card span { position: relative; z-index: 2; font-weight: 800; text-shadow: 0 4px 10px rgba(0,0,0,0.8); }
+        .track-card:hover .track-preview { opacity: 0.8; transform: scale(1.05); }
+
+        /* --- Game Interface --- */
+        #game-container { position: relative; width: 100vw; height: 100vh; background: #05080f; }
+        canvas { display: block; width: 100%; height: 100%; }
+
+        .hud {
+            position: absolute; padding: 25px; z-index: 20; pointer-events: none;
+        }
+        .hud-top-left { top: 0; left: 0; }
+        .hud-top-right { top: 0; right: 0; text-align: right; }
+        .hud-bottom { 
+            bottom: 30px; left: 50%; transform: translateX(-50%); 
+            width: 85%; max-width: 600px; 
+        }
+
+        .hud-text {
+            font-size: 1.5rem; font-weight: 800; text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* Speedometer & Battery UI */
+        .speedometer-container {
+            background: rgba(15, 23, 42, 0.6); border-radius: 20px; padding: 12px;
+            border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .speed-info {
+            display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px;
+        }
+        .speed-label { font-size: 0.8rem; font-weight: 700; color: var(--text-muted); letter-spacing: 1px; }
+        .speed-value { font-size: 1.5rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+        
+        .speed-bar-bg {
+            height: 12px; background: rgba(0,0,0,0.6); border-radius: 6px; overflow: hidden; position: relative;
+        }
+        .speed-bar-fill {
+            height: 100%; width: 0%; background: linear-gradient(90deg, #3b82f6, #10b981, #f59e0b, #ef4444);
+            transition: width 0.1s linear, background 0.3s ease; border-radius: 6px;
+        }
+        .danger-zone {
+            position: absolute; right: 0; top: 0; height: 100%;
+            background: repeating-linear-gradient(45deg, rgba(239,68,68,0.3), rgba(239,68,68,0.3) 10px, rgba(239,68,68,0.5) 10px, rgba(239,68,68,0.5) 20px);
+            border-left: 2px solid #ef4444; transition: width 0.3s;
+        }
+
+        /* Gas Pedal Control */
+        #gas-pedal {
+            position: absolute; bottom: 50px; right: 50px;
+            width: 90px; height: 90px; border-radius: 50%;
+            background: transparent; border: 2px solid rgba(255,255,255,0.2);
+            display: flex; justify-content: center; align-items: center;
+            font-weight: 800; font-size: 1.2rem; color: black;
+            z-index: 30; user-select: none; touch-action: none; pointer-events: auto;
+            backdrop-filter: blur(5px); box-shadow: 0 15px 30px rgba(0,0,0,0.6);
+            transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer;
+        }
+        #gas-pedal:active, #gas-pedal.active-pedal {
+            background: transparent; border-color: var(--primary);
+            transform: scale(0.9); color: black;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5), inset 0 0 25px rgba(59,130,246,0.9);
+        }
+
+        /* Instructions */
+        .instruction {
+            position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%);
+            font-size: 1.2rem; font-weight: 700; color: white; text-align: center;
+            text-shadow: 0 4px 15px rgba(0,0,0,1); animation: pulse 1.5s infinite;
+            z-index: 25; pointer-events: none; background: rgba(0,0,0,0.5); padding: 15px 30px; border-radius: 30px;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 0.7; transform: translate(-50%, -50%) scale(0.98); }
+            50% { opacity: 1; transform: translate(-50%, -50%) scale(1.02); }
+        }
+
+        .hidden { display: none !important; }
+        .flex-row { display: flex; justify-content: center; gap: 15px; margin: 15px 0; flex-wrap: wrap; }
+        
+        #particles { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+
+        /* --- Mobile Optimization --- */
+        @media (max-width: 768px) {
+            .glass-panel { padding: 30px 20px; width: 95%; max-height: 95vh; }
+            h1 { font-size: 2.2rem; }
+            h2 { font-size: 1.5rem; }
+            p { font-size: 0.95rem; }
+            
+            .grid-container { grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 15px 0; }
+            .card { padding: 15px 10px; border-radius: 15px; }
+            .card img { height: 80px; margin-bottom: 10px; } 
+            .card h3 { font-size: 0.85rem; margin-bottom: 10px; }
+            
+            .parts-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 15px; }
+            .part-card { padding: 10px; }
+            .part-card h4 { font-size: 0.85rem; }
+            .part-card p { font-size: 0.7rem; }
+
+            .btn-depth { padding: 12px 20px; font-size: 0.85rem; margin: 5px; }
+            #audio-toggle { top: 15px; right: 15px; width: 40px; height: 40px; font-size: 1rem; }
+
+            .hud { padding: 15px; }
+            .hud-text { font-size: 1.1rem; }
+            .speedometer-container { padding: 10px; }
+            .speed-value { font-size: 1.2rem; }
+            .hud-bottom { bottom: 20px; width: 90%; }
+            #gas-pedal { width: 75px; height: 75px; bottom: 90px; right: 20px; font-size: 1rem; }
+            .instruction { width: 80%; font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Audio Element (BGM) -->
+    <audio id="bgm-audio" loop>
+        <source src="WGP_4wd.mp3" type="audio/mpeg">
+    </audio>
+
+    <canvas id="particles"></canvas>
+
+    <!-- Global Audio Toggle Button -->
+    <button id="audio-toggle" class="btn-depth" onclick="toggleAudio()">🔊</button>
+
+    <!-- SPLASH SCREEN -->
+    <div id="screen-splash" class="screen active" onclick="enterLobby()">
+        <h1 class="title-gradient" style="animation: pulse 1.5s infinite; font-size: 2.5rem;">TAP TO START ENGINE</h1>
+        <p style="color: var(--text-muted); margin-top: 20px;">Menghidupkan Mesin & Audio...</p>
+    </div>
+
+    <!-- LOBBY SCREEN -->
+    <div id="screen-lobby" class="screen">
+        <div class="glass-panel">
+            <h3 style="color: var(--text-muted); margin-bottom: 5px;">Mini 4WD Simulation</h3>
+            <h1 class="title-gradient">BAKUSOU KYOUDAI<br>LET'S & GO!!</h1>
+            <p style="margin-bottom: 35px; color: #cbd5e1;">
+                Kendalikan gas di lintasan. Lepas gas saat masuk tikungan tajam agar tidak Course Out!<br>
+                Desain Web Interaktif Premium.
+            </p>
+            <button class="btn-depth action" onclick="navTo('screen-car')" style="padding: 16px 40px; font-size: 1.1rem;">MULAI BALAPAN</button>
+        </div>
+    </div>
+
+    <!-- CAR SELECTION SCREEN -->
+    <div id="screen-car" class="screen">
+        <div class="glass-panel" style="max-width: 1000px;">
+            <h2 class="title-gradient">PILIH MESINMU</h2>
+            <div class="grid-container" id="car-grid">
+                <!-- Foto-foto Tamiya yang Anda upload akan dimasukkan ke sini oleh JavaScript -->
+            </div>
+            <div class="flex-row">
+                <button class="btn-depth" onclick="navTo('screen-lobby')">KEMBALI</button>
+                <button class="btn-depth action" onclick="checkCarSelection()">LANJUT</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PARTS SELECTION SCREEN (DINAMO & GEAR) -->
+    <div id="screen-parts" class="screen">
+        <div class="glass-panel" style="max-width: 900px;">
+            <h2 class="title-gradient">TUNE UP MESIN & GEAR</h2>
+            
+            <h3 style="color: var(--text-muted); margin-bottom: 10px;">PILIH DINAMO (MOTOR)</h3>
+            <div class="parts-grid" id="motor-grid">
+                <!-- Data Motor dirender disini -->
+            </div>
+
+            <h3 style="color: var(--text-muted); margin: 20px 0 10px 0;">PILIH GEAR RATIO</h3>
+            <div class="parts-grid" id="gear-grid">
+                <!-- Data Gear dirender disini -->
+            </div>
+
+            <div class="flex-row">
+                <button class="btn-depth" onclick="navTo('screen-car')">KEMBALI</button>
+                <button class="btn-depth action" onclick="checkPartsSelection()">LANJUT</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TRACK SELECTION SCREEN (DIUPDATE: TAMBAH BANYAK TRACK) -->
+    <div id="screen-track" class="screen">
+        <div class="glass-panel" style="max-width: 1000px;">
+            <h2 class="title-gradient">PILIH LINTASAN</h2>
+            <div class="grid-container" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                <div class="card track-card" onclick="selectTrack('oval', this)">
+                    <div class="track-preview" style="background: linear-gradient(135deg, #1e3a8a, #0f172a);"></div>
+                    <span>OVAL SPRINT</span>
+                </div>
+                <div class="card track-card" onclick="selectTrack('technical', this)">
+                    <div class="track-preview" style="background: linear-gradient(135deg, #064e3b, #0f172a);"></div>
+                    <span>TECHNICAL CIRCUIT</span>
+                </div>
+                <div class="card track-card" onclick="selectTrack('delta', this)">
+                    <div class="track-preview" style="background: linear-gradient(135deg, #b91c1c, #0f172a);"></div>
+                    <span>DELTA CIRCUIT</span>
+                </div>
+                <div class="card track-card" onclick="selectTrack('cross', this)">
+                    <div class="track-preview" style="background: linear-gradient(135deg, #6d28d9, #0f172a);"></div>
+                    <span>CROSS CIRCUIT</span>
+                </div>
+                <div class="card track-card" onclick="selectTrack('box', this)">
+                    <div class="track-preview" style="background: linear-gradient(135deg, #b45309, #0f172a);"></div>
+                    <span>BOX CIRCUIT</span>
+                </div>
+            </div>
+            <div class="flex-row" style="margin-top: 20px;">
+                <button class="btn-depth" onclick="navTo('screen-parts')">KEMBALI</button>
+                <button class="btn-depth action" onclick="checkTrackSelection()">LANJUT</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SETTINGS SCREEN -->
+    <div id="screen-settings" class="screen">
+        <div class="glass-panel">
+            <h2 class="title-gradient">PENGATURAN</h2>
+            
+            <h3 style="margin: 25px 0 10px; color:var(--text-muted);">TINGKAT KESULITAN (AI)</h3>
+            <div class="flex-row">
+                <button class="btn-depth diff-btn" onclick="selectDifficulty('easy', this)">EASY</button>
+                <button class="btn-depth diff-btn selected" onclick="selectDifficulty('medium', this)">MEDIUM</button>
+                <button class="btn-depth diff-btn" onclick="selectDifficulty('hard', this)">HARD</button>
+            </div>
+
+            <h3 style="margin: 30px 0 10px; color:var(--text-muted);">JUMLAH LAP</h3>
+            <div class="flex-row">
+                <button class="btn-depth lap-btn" onclick="selectLap(1, this)">1 LAP</button>
+                <button class="btn-depth lap-btn selected" onclick="selectLap(2, this)">2 LAP</button>
+                <button class="btn-depth lap-btn" onclick="selectLap(3, this)">3 LAP</button>
+                <button class="btn-depth lap-btn" onclick="selectLap(4, this)">4 LAP</button>
+                <button class="btn-depth lap-btn" onclick="selectLap(5, this)">5 LAP</button>
+            </div>
+
+            <div class="flex-row" style="margin-top: 40px;">
+                <button class="btn-depth" onclick="navTo('screen-track')">KEMBALI</button>
+                <button class="btn-depth action" onclick="startGame()" style="padding: 14px 40px;">RACE ON!</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- GAME SCREEN -->
+    <div id="screen-game" class="screen">
+        <div id="game-container">
+            <canvas id="gameCanvas"></canvas>
+            
+            <div class="hud hud-top-left">
+                <div class="hud-text" id="hud-lap">LAP: 1/3</div>
+                <div class="hud-text" id="hud-pos" style="font-size: 1.1rem; color: var(--primary); margin-top: 5px;">POS: 1st</div>
+            </div>
+
+            <div class="hud hud-top-right">
+                <div class="hud-text" id="hud-time" style="color: #cbd5e1;">00:00.00</div>
+            </div>
+
+            <div id="start-msg" class="instruction">TAHAN GAS LALU LEPAS<br>SAAT TIKUNGAN TAJAM!</div>
+
+            <div class="hud hud-bottom">
+                <div class="speedometer-container">
+                    <!-- Battery Info -->
+                    <div class="speed-info" style="margin-bottom: 5px;">
+                        <span class="speed-label">BATTERY</span>
+                        <span class="speed-value" id="battery-val" style="font-size: 1.2rem;">100%</span>
+                    </div>
+                    <div class="speed-bar-bg" style="height: 8px; margin-bottom: 12px;">
+                        <div class="speed-bar-fill" id="battery-fill" style="background: #10b981; width: 100%;"></div>
+                    </div>
+
+                    <!-- Speed Info -->
+                    <div class="speed-info">
+                        <span class="speed-label">SPEED</span>
+                        <span class="speed-value" id="speed-val">0 <span style="font-size:0.8rem; color:var(--text-muted)">KM/H</span></span>
+                    </div>
+                    <div class="speed-bar-bg">
+                        <div class="speed-bar-fill" id="speed-bar"></div>
+                        <div class="danger-zone" id="danger-zone" style="width: 20%;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="gas-pedal">GAS</div>
+        </div>
+    </div>
+
+    <!-- RESULT SCREEN -->
+    <div id="screen-result" class="screen">
+        <div class="glass-panel">
+            <h1 class="title-gradient" id="result-title" style="font-size: 3.5rem; margin-bottom:10px;">YOU WIN!</h1>
+            <p id="result-desc" style="font-size: 1.2rem; color: #94a3b8; margin-bottom: 40px;">Catatan Waktu: 00:00.00</p>
+            <div class="flex-row">
+                <button class="btn-depth" onclick="navTo('screen-lobby')">MENU UTAMA</button>
+                <button class="btn-depth action" onclick="startGame()">MAIN LAGI</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+    // --- AUDIO SYSTEM ---
+    const bgm = document.getElementById('bgm-audio');
+    const audioBtn = document.getElementById('audio-toggle');
+    let isMuted = false;
+
+    function enterLobby() {
+        bgm.volume = 0.4;
+        bgm.play().catch(e => console.log("Audio membutuhkan interaksi user:", e));
+        audioBtn.style.display = 'flex';
+        navTo('screen-lobby');
+    }
+
+    function toggleAudio() {
+        isMuted = !isMuted;
+        bgm.muted = isMuted;
+        if (isMuted) {
+            audioBtn.innerText = '🔇';
+            audioBtn.classList.remove('action');
+        } else {
+            audioBtn.innerText = '🔊';
+            audioBtn.classList.add('action');
+            if (bgm.paused) bgm.play();
+        }
+    }
+
+    // --- DATA MOBIL & PARTS ---
+    const carsData = [
+        { id: 'buster', name: 'Buster Sonic', img: 'Foto/BusterSonicPremium.webp', topSpeed: 10, accel: 0.15, grip: 0.90, color: '#ef4444' },
+        { id: 'beat', name: 'Beat Magnum', img: 'Foto/BeatMagnumPremium.webp', topSpeed: 11.5, accel: 0.12, grip: 0.65, color: '#3b82f6' },
+        { id: 'neo', name: 'Neo Tridagger ZMC', img: 'Foto/NeoTridaggerZMCCarbonSP.webp', topSpeed: 10.5, accel: 0.20, grip: 0.75, color: '#f59e0b' },
+        { id: 'proto', name: 'Proto Saber EVO', img: 'Foto/ProtoSaberEvolutionPremium.webp', topSpeed: 9.5, accel: 0.18, grip: 0.95, color: '#8b5cf6' },
+        { id: 'spin', name: 'Spin Cobra', img: 'Foto/SpinCobraPremium.webp', topSpeed: 9.0, accel: 0.25, grip: 1.0, color: '#0ea5e9' },
+        { id: 'berg', name: 'Bergkaiser', img: 'Foto/BergkaiserPremium.webp', topSpeed: 11.0, accel: 0.14, grip: 0.85, color: '#d97706' },
+        { id: 'buck', name: 'Buck Blader', img: 'Foto/BuckBlader.webp', topSpeed: 10.0, accel: 0.20, grip: 0.90, color: '#1e40af' },
+        { id: 'dios', name: 'Diospada', img: 'Foto/DiospadaPremium.webp', topSpeed: 11.2, accel: 0.16, grip: 0.70, color: '#dc2626' },
+        { id: 'gun', name: 'Gun Bluster XTO', img: 'Foto/GunBlusterXTO.webp', topSpeed: 9.5, accel: 0.22, grip: 1.05, color: '#059669' },
+        { id: 'jammin', name: "Jammin' RG", img: 'Foto/JamminRG.webp', topSpeed: 9.8, accel: 0.18, grip: 0.88, color: '#facc15' },
+        { id: 'native', name: 'Native Sun', img: 'Foto/NativeSun.webp', topSpeed: 9.2, accel: 0.24, grip: 0.92, color: '#ea580c' },
+        { id: 'omega', name: 'Omega 01', img: 'Foto/Omega01.webp', topSpeed: 12.0, accel: 0.10, grip: 0.60, color: '#94a3b8' },
+        { id: 'savanna', name: 'Savanna Zebra', img: 'Foto/SavannaZebraAnime.webp', topSpeed: 10.2, accel: 0.17, grip: 0.82, color: '#4b5563' },
+        { id: 'white', name: 'White Night', img: 'Foto/WhiteNightNieminen.webp', topSpeed: 9.8, accel: 0.19, grip: 0.95, color: '#f1f5f9' },
+        { id: 'shining', name: 'Shining Scorpion', img: 'Foto/ShiningScorpion.webp', topSpeed: 10.8, accel: 0.21, grip: 0.80, color: '#38bdf8' }
+    ];
+
+    const motorsData = [
+        { id: 'std', name: 'Standard Motor', speed: 1.0, accel: 1.0, drain: 0.02, color: '#94a3b8' },
+        { id: 'rev', name: 'Rev-Tuned', speed: 1.15, accel: 0.9, drain: 0.04, color: '#3b82f6' },
+        { id: 'torque', name: 'Torque-Tuned', speed: 0.9, accel: 1.25, drain: 0.035, color: '#f59e0b' },
+        { id: 'hyper', name: 'Hyper Dash 3', speed: 1.3, accel: 1.2, drain: 0.065, color: '#ef4444' }
+    ];
+
+    const gearsData = [
+        { id: 'g4', name: 'Gear 4:1 (Power)', speed: 0.9, accel: 1.2 },
+        { id: 'g35', name: 'Gear 3.5:1 (Balance)', speed: 1.0, accel: 1.0 },
+        { id: 'g31', name: 'Gear 3.1:1 (Speed)', speed: 1.15, accel: 0.85 }
+    ];
+
+    let state = { car: null, motor: null, gear: null, track: null, difficulty: 'medium', laps: 2 };
+
+    // --- UI CONTROLLER & IMAGE RENDERER ---
+    function navTo(screenId) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(screenId).classList.add('active');
+        if(screenId === 'screen-lobby') initParticles();
+        else cancelAnimationFrame(particleAnim);
+    }
+
+    function renderCars() {
+        const grid = document.getElementById('car-grid');
+        grid.innerHTML = '';
+        
+        carsData.forEach(car => {
+            const speedPct = (car.topSpeed / 12) * 100;
+            const accelPct = (car.accel / 0.3) * 100;
+            const gripPct = (car.grip / 1.1) * 100;
+
+            const div = document.createElement('div');
+            div.className = 'card';
+            div.onclick = () => selectCar(car.id, div);
+            
+            div.innerHTML = `
+                <img src="${car.img}" alt="${car.name}">
+                <h3>${car.name}</h3>
+                <div class="stats">
+                    Speed
+                    <div class="stat-bar"><div class="stat-fill" style="width:${speedPct}%; background:${car.color}"></div></div>
+                    Acceleration
+                    <div class="stat-bar"><div class="stat-fill" style="width:${accelPct}%; background:${car.color}"></div></div>
+                    Corner Grip
+                    <div class="stat-bar"><div class="stat-fill" style="width:${gripPct}%; background:${car.color}"></div></div>
+                </div>
+            `;
+            grid.appendChild(div);
+        });
+    }
+
+    function renderParts() {
+        const motorGrid = document.getElementById('motor-grid');
+        motorGrid.innerHTML = '';
+        motorsData.forEach(m => {
+            const div = document.createElement('div');
+            div.className = 'part-card';
+            div.onclick = () => selectMotor(m.id, div);
+            div.innerHTML = `
+                <div class="part-indicator" style="background: ${m.color}"></div>
+                <h4>${m.name}</h4>
+                <p>Top Speed: <b>${m.speed}x</b><br>Accel: <b>${m.accel}x</b><br>Battery Drain: <b>${m.drain > 0.04 ? 'High' : (m.drain < 0.03 ? 'Low' : 'Med')}</b></p>
+            `;
+            motorGrid.appendChild(div);
+        });
+
+        const gearGrid = document.getElementById('gear-grid');
+        gearGrid.innerHTML = '';
+        gearsData.forEach(g => {
+            const div = document.createElement('div');
+            div.className = 'part-card';
+            div.onclick = () => selectGear(g.id, div);
+            div.innerHTML = `
+                <div class="part-indicator" style="background: var(--primary)"></div>
+                <h4>${g.name}</h4>
+                <p>Top Speed: <b>${g.speed}x</b><br>Accel: <b>${g.accel}x</b></p>
+            `;
+            gearGrid.appendChild(div);
+        });
+    }
+
+    function selectCar(id, el) {
+        state.car = carsData.find(c => c.id === id);
+        document.querySelectorAll('#car-grid .card').forEach(c => c.classList.remove('selected'));
+        el.classList.add('selected');
+    }
+    
+    function selectMotor(id, el) {
+        state.motor = motorsData.find(m => m.id === id);
+        document.querySelectorAll('#motor-grid .part-card').forEach(c => c.classList.remove('selected'));
+        el.classList.add('selected');
+    }
+    
+    function selectGear(id, el) {
+        state.gear = gearsData.find(g => g.id === id);
+        document.querySelectorAll('#gear-grid .part-card').forEach(c => c.classList.remove('selected'));
+        el.classList.add('selected');
+    }
+
+    function checkCarSelection() { state.car ? navTo('screen-parts') : alertCustom('Silakan klik salah satu gambar mobil terlebih dahulu!'); }
+    function checkPartsSelection() { 
+        if(state.motor && state.gear) navTo('screen-track'); 
+        else alertCustom('Silakan pilih Dinamo dan Gear terlebih dahulu!'); 
+    }
+    function selectTrack(id, el) {
+        state.track = id;
+        document.querySelectorAll('.track-card').forEach(c => c.classList.remove('selected'));
+        el.classList.add('selected');
+    }
+    function checkTrackSelection() { state.track ? navTo('screen-settings') : alertCustom('Pilih lintasan!'); }
+    function selectDifficulty(diff, el) {
+        state.difficulty = diff;
+        document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('selected'));
+        el.classList.add('selected');
+    }
+    function selectLap(laps, el) {
+        state.laps = laps;
+        document.querySelectorAll('.lap-btn').forEach(b => b.classList.remove('selected'));
+        el.classList.add('selected');
+    }
+
+    function alertCustom(msg) {
+        const d = document.createElement('div');
+        d.style.cssText = "position:fixed; top:30px; left:50%; transform:translateX(-50%); background:var(--accent); color:white; padding:15px 25px; border-radius:12px; z-index:1000; font-weight:700; box-shadow:0 10px 30px rgba(0,0,0,0.5); text-align:center;";
+        d.innerText = msg;
+        document.body.appendChild(d);
+        setTimeout(() => { d.style.opacity = '0'; d.style.transition = 'opacity 0.5s'; setTimeout(()=>d.remove(), 500); }, 2000);
+    }
+
+    // --- PARTICLE BACKGROUND ---
+    const partCanvas = document.getElementById('particles');
+    const pCtx = partCanvas.getContext('2d');
+    let particlesArray = [];
+    let particleAnim;
+    function initParticles() {
+        partCanvas.width = window.innerWidth; partCanvas.height = window.innerHeight;
+        particlesArray = [];
+        for(let i=0; i<40; i++) {
+            particlesArray.push({
+                x: Math.random() * partCanvas.width, y: Math.random() * partCanvas.height,
+                size: Math.random() * 2.5 + 0.5,
+                speedX: (Math.random() - 0.5) * 0.8, speedY: (Math.random() - 0.5) * 0.8,
+                color: Math.random() > 0.5 ? '#3b82f6' : '#ef4444'
+            });
+        }
+        animateParticles();
+    }
+    function animateParticles() {
+        pCtx.clearRect(0, 0, partCanvas.width, partCanvas.height);
+        particlesArray.forEach(p => {
+            pCtx.fillStyle = p.color; pCtx.globalAlpha = 0.4;
+            pCtx.beginPath(); pCtx.arc(p.x, p.y, p.size, 0, Math.PI*2); pCtx.fill();
+            p.x += p.speedX; p.y += p.speedY;
+            if(p.x < 0 || p.x > partCanvas.width) p.speedX *= -1;
+            if(p.y < 0 || p.y > partCanvas.height) p.speedY *= -1;
+        });
+        particleAnim = requestAnimationFrame(animateParticles);
+    }
+
+    // --- GAME ENGINE (Proportional Physics & Rendering) ---
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    let gameLoop;
+    let isRacing = false;
+    let trackPath = [];
+    let pathLength = 0;
+    let trackWidth, laneOffset, carWidth, carHeight;
+    let isGasPressed = false;
+    let startTime, elapsedTime = 0;
+    
+    let player = { progress: 0, speed: 0, lap: 1, courseOut: false, imgObj: new Image(), battery: 100 };
+    let ai = { progress: 0, speed: 0, lap: 1, color: '#ff2a2a', carData: null, imgObj: new Image() };
+
+    window.addEventListener('keydown', (e) => { if(e.code === 'Space' && isRacing) isGasPressed = true; });
+    window.addEventListener('keyup', (e) => { if(e.code === 'Space') isGasPressed = false; });
+    const gasBtn = document.getElementById('gas-pedal');
+    gasBtn.addEventListener('mousedown', () => isGasPressed = true);
+    gasBtn.addEventListener('mouseup', () => isGasPressed = false);
+    gasBtn.addEventListener('mouseleave', () => isGasPressed = false);
+    gasBtn.addEventListener('touchstart', (e) => { e.preventDefault(); isGasPressed = true; gasBtn.classList.add('active-pedal'); });
+    gasBtn.addEventListener('touchend', (e) => { e.preventDefault(); isGasPressed = false; gasBtn.classList.remove('active-pedal'); });
+
+    window.addEventListener('resize', () => { if(document.getElementById('screen-game').classList.contains('active') && !isRacing) resizeCanvas(); });
+
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        trackWidth = Math.max(60, Math.min(canvas.width, canvas.height) * 0.14);
+        laneOffset = trackWidth * 0.25;
+        carWidth = trackWidth * 0.35;
+        carHeight = carWidth * 1.6;
+        generateTrackPath();
+    }
+
+    function generateTrackPath() {
+        trackPath = [];
+        const w = canvas.width, h = canvas.height, cx = w/2, cy = h/2;
+        const rx = w * 0.35, ry = h * 0.35;
+
+        // DIUPDATE: Logika untuk memproses 5 bentuk lintasan
+        if(state.track === 'oval') {
+            for(let a=0; a<Math.PI*2; a+=0.08) {
+                const n = 2.5;
+                const x = cx + rx * Math.pow(Math.abs(Math.cos(a)), 2/n) * Math.sign(Math.cos(a));
+                const y = cy + ry * Math.pow(Math.abs(Math.sin(a)), 2/n) * Math.sign(Math.sin(a));
+                trackPath.push({x, y});
+            }
+        } else if(state.track === 'delta') {
+            for(let a=0; a<Math.PI*2; a+=0.05) {
+                const radMod = 1 - 0.25 * Math.cos(3*a);
+                const x = cx + rx * radMod * Math.cos(a);
+                const y = cy + ry * radMod * Math.sin(a);
+                trackPath.push({x, y});
+            }
+        } else if(state.track === 'cross') {
+            for(let a=0; a<Math.PI*2; a+=0.05) {
+                const radMod = 1 - 0.35 * Math.cos(4*a);
+                const x = cx + rx * radMod * Math.cos(a);
+                const y = cy + ry * radMod * Math.sin(a);
+                trackPath.push({x, y});
+            }
+        } else if(state.track === 'box') {
+            for(let a=0; a<Math.PI*2; a+=0.08) {
+                const n = 5; // Lebih kotak, tikungan lebih mematikan
+                const x = cx + rx * Math.pow(Math.abs(Math.cos(a)), 2/n) * Math.sign(Math.cos(a));
+                const y = cy + ry * Math.pow(Math.abs(Math.sin(a)), 2/n) * Math.sign(Math.sin(a));
+                trackPath.push({x, y});
+            }
+        } else { // technical
+            for(let a=0; a<Math.PI*2; a+=0.05) {
+                const radMod = 1 - 0.3 * Math.cos(2*a);
+                const x = cx + rx * radMod * Math.cos(a);
+                const y = cy + ry * radMod * Math.sin(a);
+                trackPath.push({x, y});
+            }
+        }
+
+        let points = [...trackPath];
+        trackPath = [];
+        pathLength = 0;
+        
+        for(let i=0; i<points.length; i++) {
+            const p1 = points[i], p2 = points[(i+1) % points.length], p0 = points[(i-1+points.length) % points.length];
+            const dx = p2.x - p1.x, dy = p2.y - p1.y;
+            const dist = Math.sqrt(dx*dx + dy*dy);
+            const angle1 = Math.atan2(p1.y - p0.y, p1.x - p0.x);
+            const angle2 = Math.atan2(p2.y - p1.y, p2.x - p1.x);
+            let dAngle = Math.abs(angle2 - angle1);
+            if(dAngle > Math.PI) dAngle = Math.PI * 2 - dAngle;
+            
+            trackPath.push({ x: p1.x, y: p1.y, dist: dist, accDist: pathLength, angle: angle2, curvature: dAngle / dist });
+            pathLength += dist;
+        }
+    }
+
+    function getPathPoint(progress) {
+        progress = progress % pathLength;
+        if(progress < 0) progress += pathLength;
+        
+        let low = 0, high = trackPath.length - 1;
+        while(low <= high) {
+            let mid = Math.floor((low + high) / 2);
+            if(trackPath[mid].accDist <= progress && (mid === trackPath.length-1 || trackPath[mid+1].accDist > progress)) {
+                const p1 = trackPath[mid], p2 = trackPath[(mid+1) % trackPath.length];
+                const t = p1.dist > 0 ? (progress - p1.accDist) / p1.dist : 0;
+                return { x: p1.x + (p2.x - p1.x) * t, y: p1.y + (p2.y - p1.y) * t, angle: p1.angle + (p2.angle - p1.angle)*t, curvature: p1.curvature };
+            }
+            if(trackPath[mid].accDist > progress) high = mid - 1; else low = mid + 1;
+        }
+        return trackPath[0];
+    }
+
+    function startGame() {
+        navTo('screen-game');
+        resizeCanvas();
+        
+        player.imgObj.src = state.car.img; 
+        
+        player.progress = 0; player.speed = 0; player.lap = 1; player.courseOut = false; player.battery = 100;
+        document.getElementById('battery-fill').style.width = '100%';
+        document.getElementById('battery-fill').style.background = '#10b981';
+        document.getElementById('battery-val').innerText = '100%';
+
+        let randomAiCar;
+        do {
+            randomAiCar = carsData[Math.floor(Math.random() * carsData.length)];
+        } while (randomAiCar.id === state.car.id && carsData.length > 1); 
+        
+        ai.carData = randomAiCar;
+        ai.color = randomAiCar.color;
+        ai.imgObj.src = randomAiCar.img; 
+        
+        ai.progress = trackWidth; ai.speed = 0; ai.lap = 1; 
+
+        isGasPressed = false; isRacing = true; startTime = Date.now();
+        
+        document.getElementById('start-msg').classList.remove('hidden');
+        setTimeout(() => document.getElementById('start-msg').classList.add('hidden'), 3500);
+        
+        updateHUD();
+        gameLoop = requestAnimationFrame(updateGame);
+    }
+
+    function endGame(isWin, isCourseOut = false) {
+        isRacing = false;
+        cancelAnimationFrame(gameLoop);
+        
+        const resTitle = document.getElementById('result-title');
+        const resDesc = document.getElementById('result-desc');
+        
+        if(isCourseOut) {
+            resTitle.innerText = "COURSE OUT!";
+            resTitle.style.background = "linear-gradient(to right, #ef4444, #991b1b)";
+            resTitle.style.webkitBackgroundClip = "text";
+            resDesc.innerText = "Gaya sentrifugal melampaui grip. Kamu terlempar!";
+        } else if (isWin) {
+            resTitle.innerText = "1ST PLACE!";
+            resTitle.style.background = "linear-gradient(to right, #10b981, #3b82f6)";
+            resTitle.style.webkitBackgroundClip = "text";
+            resDesc.innerText = `Waktu Selesai: ${formatTime(elapsedTime)}`;
+        } else {
+            resTitle.innerText = "YOU LOSE!";
+            resTitle.style.background = "linear-gradient(to right, #64748b, #334155)";
+            resTitle.style.webkitBackgroundClip = "text";
+            resDesc.innerText = "Mesin lawan lebih kencang darimu.";
+        }
+        
+        setTimeout(() => navTo('screen-result'), 1500);
+    }
+
+    function formatTime(ms) {
+        let date = new Date(ms);
+        return date.toISOString().substr(14, 5) + "." + Math.floor((ms%1000)/10).toString().padStart(2, '0');
+    }
+
+    function updateGame() {
+        if(!isRacing) return;
+        elapsedTime = Date.now() - startTime;
+        
+        const motor = state.motor;
+        const gear = state.gear;
+
+        const baseMaxS = state.car.topSpeed * motor.speed * gear.speed * (trackWidth/80);
+        const baseAcc = state.car.accel * motor.accel * gear.accel * (trackWidth/80);
+        const gripLimit = state.car.grip * 6;
+        
+        if(isGasPressed && !player.courseOut) {
+            player.battery -= motor.drain;
+            if(player.battery < 0) player.battery = 0;
+            player.speed += baseAcc;
+        } else {
+            player.speed *= 0.94;
+        }
+        
+        let batPenalty = 1.0;
+        if (player.battery < 40) batPenalty = 0.4 + (0.6 * (player.battery / 40)); 
+        if (player.battery <= 0) batPenalty = 0.2; 
+        
+        const currentMaxS = (baseMaxS * batPenalty) + (baseAcc * batPenalty);
+        player.speed = Math.max(0, Math.min(player.speed, currentMaxS));
+
+        let pData = getPathPoint(player.progress);
+        
+        let curveForce = (player.speed * player.speed) * pData.curvature;
+        let dangerPct = (curveForce / gripLimit) * 100;
+        let barColor = player.speed > 0 ? `hsl(${120 - Math.min(120, dangerPct*1.2)}, 90%, 50%)` : '#334155';
+        
+        if(!player.courseOut) {
+            document.getElementById('speed-bar').style.width = `${(player.speed/baseMaxS)*100}%`;
+            document.getElementById('speed-bar').style.background = barColor;
+            document.getElementById('speed-val').innerHTML= `${Math.floor((player.speed / baseMaxS * currentMaxS) * currentMaxS)} <span style="font-size:0.8rem; color:var(--text-muted)">KM/H</span>`;
+            
+            let safeMaxSpeed = Math.sqrt(gripLimit / (pData.curvature + 0.0001));
+            let dangerZoneWidth = Math.max(0, 100 - (safeMaxSpeed/baseMaxS)*100);
+            document.getElementById('danger-zone').style.width = `${dangerZoneWidth}%`;
+
+            document.getElementById('battery-fill').style.width = `${player.battery}%`;
+            document.getElementById('battery-val').innerText = `${Math.ceil(player.battery)}%`;
+            if(player.battery < 20) {
+                document.getElementById('battery-fill').style.background = '#ef4444';
+            } else if (player.battery < 50) {
+                document.getElementById('battery-fill').style.background = '#f59e0b';
+            } else {
+                document.getElementById('battery-fill').style.background = '#10b981';
+            }
+        }
+
+        if(curveForce > gripLimit && player.speed > (baseMaxS*0.2)) {
+            player.courseOut = true; player.speed = 0; endGame(false, true);
+        }
+
+        let aiPData = getPathPoint(ai.progress);
+        let aiPDataAhead = getPathPoint(ai.progress + (trackWidth*1.5));
+        let maxCurve = Math.max(aiPData.curvature, aiPDataAhead.curvature);
+        
+        let diffMultiplier = state.difficulty === 'easy' ? 0.65 : (state.difficulty === 'medium' ? 0.85 : 0.98);
+        let aiGripLimit = (ai.carData.grip * 6) * 0.9; 
+        let aiSafeSpeed = Math.sqrt(aiGripLimit / (maxCurve + 0.0001)) * diffMultiplier;
+        let aiMaxS = (ai.carData.topSpeed * diffMultiplier) * (trackWidth/80);
+        
+        let aiTargetSpeed = Math.min(aiSafeSpeed, aiMaxS);
+        ai.speed += (aiTargetSpeed - ai.speed) * 0.15;
+
+        if(!player.courseOut) {
+            let prevP = player.progress;
+            player.progress += player.speed;
+            if(prevP % pathLength > (player.progress) % pathLength && player.progress > pathLength/2) {
+                player.lap++; if(player.lap > state.laps) endGame(true, false);
+            }
+        }
+        
+        let prevA = ai.progress;
+        ai.progress += ai.speed;
+        if(prevA % pathLength > (ai.progress) % pathLength && ai.progress > pathLength/2) {
+            ai.lap++; if(ai.lap > state.laps && isRacing) endGame(false, false);
+        }
+
+        // --- RENDER ---
+        ctx.fillStyle = '#05080f';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+        
+        ctx.beginPath();
+        for(let i=0; i<=trackPath.length; i++) {
+            let p = trackPath[i % trackPath.length];
+            if(i===0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y);
+        }
+        ctx.strokeStyle = '#1e293b'; ctx.lineWidth = trackWidth + 12; ctx.stroke();
+        ctx.strokeStyle = '#0f172a'; ctx.lineWidth = trackWidth; ctx.stroke();
+
+        ctx.beginPath();
+        for(let i=0; i<=trackPath.length; i++) {
+            let p = trackPath[i % trackPath.length];
+            let nx = Math.cos(p.angle + Math.PI/2), ny = Math.sin(p.angle + Math.PI/2);
+            if(i===0) ctx.moveTo(p.x + nx*laneOffset, p.y + ny*laneOffset); else ctx.lineTo(p.x + nx*laneOffset, p.y + ny*laneOffset);
+        }
+        ctx.strokeStyle = 'rgba(255,255,255,0.08)'; ctx.lineWidth = 2; ctx.stroke();
+        ctx.beginPath();
+        for(let i=0; i<=trackPath.length; i++) {
+            let p = trackPath[i % trackPath.length];
+            let nx = Math.cos(p.angle + Math.PI/2), ny = Math.sin(p.angle + Math.PI/2);
+            if(i===0) ctx.moveTo(p.x - nx*laneOffset, p.y - ny*laneOffset); else ctx.lineTo(p.x - nx*laneOffset, p.y - ny*laneOffset);
+        }
+        ctx.stroke();
+
+        let sP = trackPath[0];
+        ctx.save();
+        ctx.translate(sP.x, sP.y); ctx.rotate(sP.angle); ctx.fillStyle = '#fff';
+        let hw = trackWidth/2;
+        for(let i=-hw; i<hw; i+=12) {
+            if(Math.floor(i/12)%2===0) ctx.fillRect(0, i, 12, 12); else ctx.fillRect(12, i, 12, 12);
+        }
+        ctx.restore();
+
+        let aNx = Math.cos(aiPData.angle + Math.PI/2), aNy = Math.sin(aiPData.angle + Math.PI/2);
+        ctx.save();
+        ctx.translate(aiPData.x + aNx*laneOffset, aiPData.y + aNy*laneOffset); 
+        ctx.rotate(aiPData.angle + Math.PI/2);
+        
+        if(ai.imgObj.complete && ai.imgObj.naturalHeight !== 0) {
+            ctx.rotate(-Math.PI/2);
+            const aspect = ai.imgObj.width / ai.imgObj.height;
+            const drawH = carHeight * 1.5; const drawW = drawH * aspect;
+            ctx.shadowColor = 'rgba(0,0,0,0.5)'; ctx.shadowBlur = 10; ctx.shadowOffsetY = 5;
+            ctx.drawImage(ai.imgObj, -drawW/2, -drawH/2, drawW, drawH);
+        } else {
+            ctx.fillStyle = ai.color; ctx.beginPath(); ctx.roundRect(-carWidth/2, -carHeight/2, carWidth, carHeight, 6); ctx.fill();
+            ctx.fillStyle = '#000'; ctx.fillRect(-carWidth*0.3, -carHeight*0.1, carWidth*0.6, carHeight*0.3);
+        }
+        ctx.restore();
+
+        let pNx = Math.cos(pData.angle + Math.PI/2), pNy = Math.sin(pData.angle + Math.PI/2);
+        ctx.save();
+        if(player.courseOut) {
+            ctx.translate(pData.x - pNx*laneOffset + (Math.random()*10-5), pData.y - pNy*laneOffset + (Math.random()*10-5));
+            ctx.rotate(pData.angle + Math.PI/2 + Math.random()*0.5); ctx.globalAlpha = 0.6;
+        } else {
+            ctx.translate(pData.x - pNx*laneOffset, pData.y - pNy*laneOffset);
+            ctx.rotate(pData.angle + Math.PI/2);
+        }
+
+        if(player.imgObj.complete && player.imgObj.naturalHeight !== 0) {
+            ctx.rotate(-Math.PI/2);
+            const aspect = player.imgObj.width / player.imgObj.height;
+            const drawH = carHeight * 1.5; const drawW = drawH * aspect;
+            ctx.shadowColor = 'rgba(0,0,0,0.5)'; ctx.shadowBlur = 10; ctx.shadowOffsetY = 5;
+            ctx.drawImage(player.imgObj, -drawW/2, -drawH/2, drawW, drawH);
+        } else {
+            ctx.fillStyle = state.car.color; ctx.beginPath(); ctx.roundRect(-carWidth/2, -carHeight/2, carWidth, carHeight, 6); ctx.fill();
+        }
+        ctx.restore();
+
+        updateHUD();
+        gameLoop = requestAnimationFrame(updateGame);
+    }
+
+    function updateHUD() {
+        document.getElementById('hud-time').innerText = formatTime(elapsedTime);
+        document.getElementById('hud-lap').innerText = `LAP: ${Math.min(player.lap, state.laps)}/${state.laps}`;
+        let pTotalDist = (player.lap-1)*pathLength + player.progress;
+        let aTotalDist = (ai.lap-1)*pathLength + ai.progress;
+        let pos = pTotalDist >= aTotalDist ? '1ST' : '2ND';
+        let posEl = document.getElementById('hud-pos');
+        posEl.innerText = `POS: ${pos}`;
+        posEl.style.color = pos === '1ST' ? '#10b981' : '#ef4444';
+    }
+
+    window.onload = () => {
+        renderCars();
+        renderParts();
+    };
+</script>
+</body>
+</html>
