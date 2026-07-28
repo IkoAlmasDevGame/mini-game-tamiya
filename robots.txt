@@ -1,0 +1,9 @@
+# https://mini-tamiya-game.vercel.app/robots.txt
+
+User-agent: *
+Allow: /
+Disallow: /api/        # Blokir folder API biar gak diindex
+Disallow: /_next/      # Blokir file sistem Next.js
+Disallow: /admin/      # Blokir kalau ada halaman admin
+
+Sitemap: https://mini-tamiya-game.vercel.app/sitemap.xml
