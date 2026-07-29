@@ -9,16 +9,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;500;700;800&display=swap" rel="stylesheet">
     <link rel="icon" href="icon/1785274178813.png" type="image/png">
     <meta name="description" content="Main game Mini 4WD Tamiya online gratis di browser. Balapan, upgrade, dan custom Tamiya kamu. Tanpa download, langsung main di HP & PC." />
-  <meta name="keywords" content="game tamiya offline, mini 4wd game, game balap tamiya, tamiya browser, main tamiya gratis" />
-  <meta name="author" content="IkoAlmas" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="canonical" href="https://mini-tamiya-game.vercel.app/" />
+    <meta name="keywords" content="game tamiya offline, mini 4wd game, game balap tamiya, tamiya browser, main tamiya gratis" />
+    <meta name="author" content="IkoAlmas" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="canonical" href="https://mini-tamiya-game.vercel.app/" />
   
-  <meta property="og:title" content="Bakusou Kyoudai Let's & Go!! - Mini 4WD Game" />
-  <meta property="og:description" content="Rasakan keseruan merakit dan balapan Tamiya Mini 4WD langsung di browser!" />
-  <meta property="og:image" content="icon/1785274178813.png" />
-  <meta property="og:url" content="https://mini-tamiya-game.vercel.app/" />
-  <meta property="og:type" content="website" />
+    <meta property="og:title" content="Bakusou Kyoudai Let's & Go!! - Mini 4WD Game" />
+    <meta property="og:description" content="Rasakan keseruan merakit dan balapan Tamiya Mini 4WD langsung di browser!" />
+    <meta property="og:image" content="icon/1785274178813.png" />
+    <meta property="og:url" content="https://mini-tamiya-game.vercel.app/" />
+    <meta property="og:type" content="website" />
     <meta name="google-site-verification" content="D35ZrJpma3CFQJ9sDbp0-yGsKu_yOt4uQmW8f-AiAYk" />
 
     <style>
@@ -1193,7 +1193,7 @@
         if(!player.courseOut) {
             document.getElementById('speed-bar').style.width = `${(player.speed/baseMaxS)*100}%`;
             document.getElementById('speed-bar').style.background = barColor;
-            document.getElementById('speed-val').innerHTML = `${Math.floor((player.speed / baseMaxS * currentMaxS) * currentMaxS)} <span style="font-size:0.8rem; color:var(--text-muted)">KM/H</span>`;
+            document.getElementById('speed-val').innerHTML = `${Math.floor((player.speed/baseMaxS*currentMaxS) * currentMaxS * baseMaxS)} <span style="font-size:0.8rem; color:var(--text-muted)">KM/H</span>`;
             
             let safeMaxSpeed = Math.sqrt(gripLimit / (pData.curvature + 0.0001));
             let dangerZoneWidth = Math.max(0, 100 - (safeMaxSpeed/baseMaxS)*100);
