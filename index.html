@@ -5,22 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Bakusou Kyoudai Let's & Go!! - Premium Web Game</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="icon" href="icon/1785274178813.png" type="image/png">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;500;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" href="icon/1785274178813.png" type="image/png">
     <meta name="description" content="Main game Mini 4WD Tamiya online gratis di browser. Balapan, upgrade, dan custom Tamiya kamu. Tanpa download, langsung main di HP & PC." />
-    <meta name="keywords" content="game tamiya online, mini 4wd game, game balap tamiya, tamiya browser, main tamiya gratis" />
-    <meta name="author" content="IkoAlmas" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="canonical" href="https://mini-tamiya-game.vercel.app/" />
+  <meta name="keywords" content="game tamiya offline, mini 4wd game, game balap tamiya, tamiya browser, main tamiya gratis" />
+  <meta name="author" content="IkoAlmas" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="canonical" href="https://mini-tamiya-game.vercel.app/" />
   
-    <!-- Open Graph buat share di WA/FB -->
-    <meta property="og:title" content="Bakusou Kyoudai Let's & Go!! - Premium Web" />
-    <meta property="og:description" content="Balapan Tamiya online langsung di browser. Custom dan upgrade Tamiya kamu sekarang!" />
-    <meta property="og:image" content="https://mini-tamiya-game.vercel.app/icon/1785274178813.png" />
-    <meta property="og:url" content="https://mini-tamiya-game.vercel.app/" />
-    <meta property="og:type" content="website" />
+  <meta property="og:title" content="Bakusou Kyoudai Let's & Go!! - Mini 4WD Game" />
+  <meta property="og:description" content="Rasakan keseruan merakit dan balapan Tamiya Mini 4WD langsung di browser!" />
+  <meta property="og:image" content="icon/1785274178813.png" />
+  <meta property="og:url" content="https://mini-tamiya-game.vercel.app/" />
+  <meta property="og:type" content="website" />
     <meta name="google-site-verification" content="D35ZrJpma3CFQJ9sDbp0-yGsKu_yOt4uQmW8f-AiAYk" />
+
     <style>
         :root {
             --bg-dark: #090e17;
@@ -178,8 +178,18 @@
             box-shadow: 0 15px 35px rgba(37, 99, 235, 0.6);
             transform: translateY(-3px);
         }
+        
+        .btn-depth.time-attack-btn {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            box-shadow: 0 10px 25px rgba(245, 158, 11, 0.4);
+            border: none;
+        }
+        .btn-depth.time-attack-btn:hover {
+            box-shadow: 0 15px 35px rgba(245, 158, 11, 0.6);
+            transform: translateY(-3px);
+        }
 
-        /* --- Audio Toggle Button --- */
+        /* --- Audio Toggle Button (Hanya tampil di luar gameplay agar tidak mengganggu kecepatan) --- */
         #audio-toggle {
             position: fixed;
             top: 25px;
@@ -367,17 +377,33 @@
         #gas-pedal {
             position: absolute; bottom: 50px; right: 50px;
             width: 90px; height: 90px; border-radius: 50%;
-            background: transparent; border: 2px solid rgba(255,255,255,0.2);
+            background: rgba(30, 41, 59, 0.6); border: 2px solid rgba(255,255,255,0.2);
             display: flex; justify-content: center; align-items: center;
-            font-weight: 800; font-size: 1.2rem; color: black;
+            font-weight: 800; font-size: 1.2rem; color: rgba(255,255,255,0.8);
             z-index: 30; user-select: none; touch-action: none; pointer-events: auto;
             backdrop-filter: blur(5px); box-shadow: 0 15px 30px rgba(0,0,0,0.6);
             transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer;
         }
         #gas-pedal:active, #gas-pedal.active-pedal {
-            background: transparent; border-color: var(--primary);
-            transform: scale(0.9); color: black;
+            background: rgba(59, 130, 246, 0.5); border-color: var(--primary);
+            transform: scale(0.9); color: white;
             box-shadow: 0 5px 15px rgba(0,0,0,0.5), inset 0 0 25px rgba(59,130,246,0.9);
+        }
+
+        /* Auto Pedal Control (Khusus Mode Hard) */
+        #auto-pedal {
+            position: absolute; bottom: 160px; right: 60px;
+            width: 70px; height: 70px; border-radius: 50%;
+            background: rgba(30, 41, 59, 0.6); border: 2px solid rgba(255,255,255,0.2);
+            display: none; justify-content: center; align-items: center; text-align: center;
+            font-weight: 800; font-size: 0.9rem; color: rgba(255,255,255,0.8);
+            z-index: 30; user-select: none; touch-action: none; pointer-events: auto;
+            backdrop-filter: blur(5px); box-shadow: 0 15px 30px rgba(0,0,0,0.6);
+            transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer;
+        }
+        #auto-pedal.active-auto {
+            background: rgba(16, 185, 129, 0.6); border-color: #10b981;
+            color: white; box-shadow: 0 5px 15px rgba(0,0,0,0.5), inset 0 0 25px rgba(16,185,129,0.9);
         }
 
         /* Instructions */
@@ -423,6 +449,7 @@
             .speed-value { font-size: 1.2rem; }
             .hud-bottom { bottom: 20px; width: 90%; }
             #gas-pedal { width: 75px; height: 75px; bottom: 90px; right: 20px; font-size: 1rem; }
+            #auto-pedal { width: 60px; height: 60px; bottom: 180px; right: 27px; font-size: 0.75rem; }
             .instruction { width: 80%; font-size: 0.9rem; }
         }
     </style>
@@ -436,7 +463,7 @@
 
     <canvas id="particles"></canvas>
 
-    <!-- Global Audio Toggle Button -->
+    <!-- Global Audio Toggle Button (Hanya tampil di Lobby/Menu) -->
     <button id="audio-toggle" class="btn-depth" onclick="toggleAudio()">🔊</button>
 
     <!-- SPLASH SCREEN -->
@@ -452,9 +479,12 @@
             <h1 class="title-gradient">BAKUSOU KYOUDAI<br>LET'S & GO!!</h1>
             <p style="margin-bottom: 35px; color: #cbd5e1;">
                 Kendalikan gas di lintasan. Lepas gas saat masuk tikungan tajam agar tidak Course Out!<br>
-                Desain Web Interaktif Premium.
+                Pilih mode balapanmu!
             </p>
-            <button class="btn-depth action" onclick="navTo('screen-car')" style="padding: 16px 40px; font-size: 1.1rem;">MULAI BALAPAN</button>
+            <div class="flex-row">
+                <button class="btn-depth action" onclick="selectMode('race')" style="padding: 16px 30px; font-size: 1.1rem;">RACE (1v1)</button>
+                <button class="btn-depth time-attack-btn" onclick="selectMode('time_attack')" style="padding: 16px 30px; font-size: 1.1rem; color: white;">TIME ATTACK</button>
+            </div>
         </div>
     </div>
 
@@ -463,7 +493,7 @@
         <div class="glass-panel" style="max-width: 1000px;">
             <h2 class="title-gradient">PILIH MESINMU</h2>
             <div class="grid-container" id="car-grid">
-                <!-- Foto-foto Tamiya yang Anda upload akan dimasukkan ke sini oleh JavaScript -->
+                <!--  -->
             </div>
             <div class="flex-row">
                 <button class="btn-depth" onclick="navTo('screen-lobby')">KEMBALI</button>
@@ -494,7 +524,7 @@
         </div>
     </div>
 
-    <!-- TRACK SELECTION SCREEN (DIUPDATE: TAMBAH BANYAK TRACK) -->
+    <!-- TRACK SELECTION SCREEN -->
     <div id="screen-track" class="screen">
         <div class="glass-panel" style="max-width: 1000px;">
             <h2 class="title-gradient">PILIH LINTASAN</h2>
@@ -519,6 +549,10 @@
                     <div class="track-preview" style="background: linear-gradient(135deg, #b45309, #0f172a);"></div>
                     <span>BOX CIRCUIT</span>
                 </div>
+                <div class="card track-card" onclick="selectTrack('changer', this)">
+                    <div class="track-preview" style="background: linear-gradient(135deg, #0ea5e9, #0f172a);"></div>
+                    <span>LANE CHANGER</span>
+                </div>
             </div>
             <div class="flex-row" style="margin-top: 20px;">
                 <button class="btn-depth" onclick="navTo('screen-parts')">KEMBALI</button>
@@ -532,11 +566,13 @@
         <div class="glass-panel">
             <h2 class="title-gradient">PENGATURAN</h2>
             
-            <h3 style="margin: 25px 0 10px; color:var(--text-muted);">TINGKAT KESULITAN (AI)</h3>
-            <div class="flex-row">
-                <button class="btn-depth diff-btn" onclick="selectDifficulty('easy', this)">EASY</button>
-                <button class="btn-depth diff-btn selected" onclick="selectDifficulty('medium', this)">MEDIUM</button>
-                <button class="btn-depth diff-btn" onclick="selectDifficulty('hard', this)">HARD</button>
+            <div id="ai-diff-container">
+                <h3 style="margin: 25px 0 10px; color:var(--text-muted);">TINGKAT KESULITAN (AI)</h3>
+                <div class="flex-row">
+                    <button class="btn-depth diff-btn" onclick="selectDifficulty('easy', this)">EASY</button>
+                    <button class="btn-depth diff-btn selected" onclick="selectDifficulty('medium', this)">MEDIUM</button>
+                    <button class="btn-depth diff-btn" onclick="selectDifficulty('hard', this)">HARD</button>
+                </div>
             </div>
 
             <h3 style="margin: 30px 0 10px; color:var(--text-muted);">JUMLAH LAP</h3>
@@ -593,7 +629,9 @@
                     </div>
                 </div>
             </div>
-
+            
+            <!-- Tombol Auto Pedal Khusus Mode Hard -->
+            <div id="auto-pedal" onclick="toggleAutoPedal(event)">AUTO<br>OFF</div>
             <div id="gas-pedal">GAS</div>
         </div>
     </div>
@@ -649,7 +687,7 @@
         { id: 'gun', name: 'Gun Bluster XTO', img: 'Foto/GunBlusterXTO.webp', topSpeed: 9.5, accel: 0.22, grip: 1.05, color: '#059669' },
         { id: 'jammin', name: "Jammin' RG", img: 'Foto/JamminRG.webp', topSpeed: 9.8, accel: 0.18, grip: 0.88, color: '#facc15' },
         { id: 'native', name: 'Native Sun', img: 'Foto/NativeSun.webp', topSpeed: 9.2, accel: 0.24, grip: 0.92, color: '#ea580c' },
-        { id: 'omega', name: 'Omega 01', img: 'Foto/Omega01.webp', topSpeed: 12.0, accel: 0.10, grip: 0.60, color: '#94a3b8' },
+        { id: 'omega', name: 'Omega 01', img: 'Foto/Omega01.webp', topSpeed: 11.0, accel: 0.10, grip: 0.60, color: '#94a3b8' },
         { id: 'savanna', name: 'Savanna Zebra', img: 'Foto/SavannaZebraAnime.webp', topSpeed: 10.2, accel: 0.17, grip: 0.82, color: '#4b5563' },
         { id: 'white', name: 'White Night', img: 'Foto/WhiteNightNieminen.webp', topSpeed: 9.8, accel: 0.19, grip: 0.95, color: '#f1f5f9' },
         { id: 'shining', name: 'Shining Scorpion', img: 'Foto/ShiningScorpion.webp', topSpeed: 10.8, accel: 0.21, grip: 0.80, color: '#38bdf8' }
@@ -668,14 +706,28 @@
         { id: 'g31', name: 'Gear 3.1:1 (Speed)', speed: 1.15, accel: 0.85 }
     ];
 
-    let state = { car: null, motor: null, gear: null, track: null, difficulty: 'medium', laps: 2 };
+    let state = { mode: 'race', car: null, motor: null, gear: null, track: null, difficulty: 'medium', laps: 2 };
 
     // --- UI CONTROLLER & IMAGE RENDERER ---
+    function selectMode(mode) {
+        state.mode = mode;
+        navTo('screen-car');
+    }
+
     function navTo(screenId) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.getElementById(screenId).classList.add('active');
-        if(screenId === 'screen-lobby') initParticles();
-        else cancelAnimationFrame(particleAnim);
+        
+        // Sembunyikan tombol audio global saat masuk layar game agar tidak mengganggu kecepatan waktu
+        if(screenId === 'screen-game') {
+            audioBtn.style.display = 'none';
+        } else if(screenId === 'screen-lobby') {
+            initParticles();
+            if(!isMuted) audioBtn.style.display = 'flex';
+        } else {
+            cancelAnimationFrame(particleAnim);
+            if(!isMuted) audioBtn.style.display = 'flex';
+        }
     }
 
     function renderCars() {
@@ -683,8 +735,8 @@
         grid.innerHTML = '';
         
         carsData.forEach(car => {
-            const speedPct = (car.topSpeed / 12) * 100;
-            const accelPct = (car.accel / 0.3) * 100;
+            const speedPct = (car.topSpeed / 15) * 100;
+            const accelPct = (car.accel / 0.5) * 100;
             const gripPct = (car.grip / 1.1) * 100;
 
             const div = document.createElement('div');
@@ -765,7 +817,23 @@
         document.querySelectorAll('.track-card').forEach(c => c.classList.remove('selected'));
         el.classList.add('selected');
     }
-    function checkTrackSelection() { state.track ? navTo('screen-settings') : alertCustom('Pilih lintasan!'); }
+
+    function checkTrackSelection() { 
+        if(state.track) {
+            if(state.mode === 'time_attack') {
+                document.getElementById('ai-diff-container').style.display = 'none';
+                selectLap(3, document.querySelectorAll('.lap-btn')[2]);
+                document.querySelectorAll('.lap-btn').forEach(btn => btn.style.pointerEvents = 'none');
+            } else {
+                document.getElementById('ai-diff-container').style.display = 'block';
+                document.querySelectorAll('.lap-btn').forEach(btn => btn.style.pointerEvents = 'auto');
+            }
+            navTo('screen-settings');
+        } else {
+            alertCustom('Pilih lintasan!'); 
+        }
+    }
+
     function selectDifficulty(diff, el) {
         state.difficulty = diff;
         document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('selected'));
@@ -815,7 +883,7 @@
         particleAnim = requestAnimationFrame(animateParticles);
     }
 
-    // --- GAME ENGINE (Proportional Physics & Rendering) ---
+    // --- GAME ENGINE ---
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
     let gameLoop;
@@ -824,19 +892,59 @@
     let pathLength = 0;
     let trackWidth, laneOffset, carWidth, carHeight;
     let isGasPressed = false;
+    let isAutoPedalActive = false;
     let startTime, elapsedTime = 0;
     
     let player = { progress: 0, speed: 0, lap: 1, courseOut: false, imgObj: new Image(), battery: 100 };
     let ai = { progress: 0, speed: 0, lap: 1, color: '#ff2a2a', carData: null, imgObj: new Image() };
 
-    window.addEventListener('keydown', (e) => { if(e.code === 'Space' && isRacing) isGasPressed = true; });
+    window.addEventListener('keydown', (e) => { 
+        if(e.code === 'Space' && isRacing) {
+            if(isAutoPedalActive) turnOffAutoPedal();
+            isGasPressed = true;
+        } 
+    });
     window.addEventListener('keyup', (e) => { if(e.code === 'Space') isGasPressed = false; });
+    
     const gasBtn = document.getElementById('gas-pedal');
-    gasBtn.addEventListener('mousedown', () => isGasPressed = true);
-    gasBtn.addEventListener('mouseup', () => isGasPressed = false);
-    gasBtn.addEventListener('mouseleave', () => isGasPressed = false);
-    gasBtn.addEventListener('touchstart', (e) => { e.preventDefault(); isGasPressed = true; gasBtn.classList.add('active-pedal'); });
-    gasBtn.addEventListener('touchend', (e) => { e.preventDefault(); isGasPressed = false; gasBtn.classList.remove('active-pedal'); });
+    const handleGasDown = (e) => { 
+        if(e) e.preventDefault();
+        if(isAutoPedalActive) turnOffAutoPedal();
+        isGasPressed = true; 
+        gasBtn.classList.add('active-pedal'); 
+    };
+    const handleGasUp = (e) => { 
+        if(e) e.preventDefault(); 
+        isGasPressed = false; 
+        gasBtn.classList.remove('active-pedal'); 
+    };
+    
+    gasBtn.addEventListener('mousedown', handleGasDown);
+    gasBtn.addEventListener('mouseup', handleGasUp);
+    gasBtn.addEventListener('mouseleave', handleGasUp);
+    gasBtn.addEventListener('touchstart', handleGasDown);
+    gasBtn.addEventListener('touchend', handleGasUp);
+
+    window.toggleAutoPedal = function(e) {
+        if(e) e.preventDefault();
+        isAutoPedalActive = !isAutoPedalActive;
+        const autoBtn = document.getElementById('auto-pedal');
+        if(isAutoPedalActive) {
+            autoBtn.classList.add('active-auto');
+            autoBtn.innerHTML = 'AUTO<br>ON';
+        } else {
+            turnOffAutoPedal();
+        }
+    };
+
+    function turnOffAutoPedal() {
+        isAutoPedalActive = false;
+        const autoBtn = document.getElementById('auto-pedal');
+        autoBtn.classList.remove('active-auto');
+        autoBtn.innerHTML = 'AUTO<br>OFF';
+        isGasPressed = false;
+        gasBtn.classList.remove('active-pedal');
+    }
 
     window.addEventListener('resize', () => { if(document.getElementById('screen-game').classList.contains('active') && !isRacing) resizeCanvas(); });
 
@@ -855,8 +963,7 @@
         const w = canvas.width, h = canvas.height, cx = w/2, cy = h/2;
         const rx = w * 0.35, ry = h * 0.35;
 
-        // DIUPDATE: Logika untuk memproses 5 bentuk lintasan
-        if(state.track === 'oval') {
+        if(state.track === 'oval' || state.track === 'changer') {
             for(let a=0; a<Math.PI*2; a+=0.08) {
                 const n = 2.5;
                 const x = cx + rx * Math.pow(Math.abs(Math.cos(a)), 2/n) * Math.sign(Math.cos(a));
@@ -879,12 +986,12 @@
             }
         } else if(state.track === 'box') {
             for(let a=0; a<Math.PI*2; a+=0.08) {
-                const n = 5; // Lebih kotak, tikungan lebih mematikan
+                const n = 5; 
                 const x = cx + rx * Math.pow(Math.abs(Math.cos(a)), 2/n) * Math.sign(Math.cos(a));
                 const y = cy + ry * Math.pow(Math.abs(Math.sin(a)), 2/n) * Math.sign(Math.sin(a));
                 trackPath.push({x, y});
             }
-        } else { // technical
+        } else { 
             for(let a=0; a<Math.PI*2; a+=0.05) {
                 const radMod = 1 - 0.3 * Math.cos(2*a);
                 const x = cx + rx * radMod * Math.cos(a);
@@ -928,10 +1035,50 @@
         return trackPath[0];
     }
 
+    function getLaneMultiplier(totalDist, startLaneMultiplier) {
+        if (state.track !== 'changer') return startLaneMultiplier;
+        
+        let trackProg = totalDist % pathLength;
+        let lapBase = Math.floor(totalDist / pathLength); 
+        
+        let startSwap = pathLength * 0.45;
+        let endSwap = pathLength * 0.55;
+        
+        let isEvenLap = lapBase % 2 === 0;
+        let currentMult = isEvenLap ? startLaneMultiplier : -startLaneMultiplier;
+        let nextMult = isEvenLap ? -startLaneMultiplier : startLaneMultiplier;
+        
+        if (trackProg >= startSwap && trackProg <= endSwap) {
+            let t = (trackProg - startSwap) / (endSwap - startSwap);
+            t = t * t * (3 - 2 * t);
+            return currentMult + (nextMult - currentMult) * t;
+        } else if (trackProg > endSwap) {
+            return nextMult;
+        } else {
+            return currentMult;
+        }
+    }
+
     function startGame() {
         navTo('screen-game');
         resizeCanvas();
         
+        const autoBtn = document.getElementById('auto-pedal');
+        const posText = document.getElementById('hud-pos');
+
+        if (state.mode === 'race') {
+            posText.style.display = 'block';
+            if (state.difficulty === 'hard') {
+                autoBtn.style.display = 'flex';
+            } else {
+                autoBtn.style.display = 'none';
+            }
+        } else { 
+            posText.style.display = 'none';
+            autoBtn.style.display = 'none'; 
+        }
+        turnOffAutoPedal(); 
+
         player.imgObj.src = state.car.img; 
         
         player.progress = 0; player.speed = 0; player.lap = 1; player.courseOut = false; player.battery = 100;
@@ -939,16 +1086,17 @@
         document.getElementById('battery-fill').style.background = '#10b981';
         document.getElementById('battery-val').innerText = '100%';
 
-        let randomAiCar;
-        do {
-            randomAiCar = carsData[Math.floor(Math.random() * carsData.length)];
-        } while (randomAiCar.id === state.car.id && carsData.length > 1); 
-        
-        ai.carData = randomAiCar;
-        ai.color = randomAiCar.color;
-        ai.imgObj.src = randomAiCar.img; 
-        
-        ai.progress = trackWidth; ai.speed = 0; ai.lap = 1; 
+        if (state.mode === 'race') {
+            let randomAiCar;
+            do {
+                randomAiCar = carsData[Math.floor(Math.random() * carsData.length)];
+            } while (randomAiCar.id === state.car.id && carsData.length > 1); 
+            
+            ai.carData = randomAiCar;
+            ai.color = randomAiCar.color;
+            ai.imgObj.src = randomAiCar.img; 
+            ai.progress = trackWidth; ai.speed = 0; ai.lap = 1; 
+        }
 
         isGasPressed = false; isRacing = true; startTime = Date.now();
         
@@ -972,11 +1120,16 @@
             resTitle.style.webkitBackgroundClip = "text";
             resDesc.innerText = "Gaya sentrifugal melampaui grip. Kamu terlempar!";
         } else if (isWin) {
-            resTitle.innerText = "1ST PLACE!";
-            resTitle.style.background = "linear-gradient(to right, #10b981, #3b82f6)";
+            if(state.mode === 'time_attack') {
+                resTitle.innerText = "FINISH!";
+                resTitle.style.background = "linear-gradient(to right, #f59e0b, #d97706)";
+            } else {
+                resTitle.innerText = "1ST PLACE!";
+                resTitle.style.background = "linear-gradient(to right, #10b981, #3b82f6)";
+            }
             resTitle.style.webkitBackgroundClip = "text";
             resDesc.innerText = `Waktu Selesai: ${formatTime(elapsedTime)}`;
-        } else {
+        } else { 
             resTitle.innerText = "YOU LOSE!";
             resTitle.style.background = "linear-gradient(to right, #64748b, #334155)";
             resTitle.style.webkitBackgroundClip = "text";
@@ -1002,6 +1155,22 @@
         const baseAcc = state.car.accel * motor.accel * gear.accel * (trackWidth/80);
         const gripLimit = state.car.grip * 6;
         
+        let pData = getPathPoint(player.progress);
+
+        if(isAutoPedalActive) {
+            let pDataAhead = getPathPoint(player.progress + (trackWidth*1.5));
+            let maxCurve = Math.max(pData.curvature, pDataAhead.curvature);
+            let safeSpeed = Math.sqrt(gripLimit / (maxCurve + 0.0001)) * 0.98;
+            
+            if(player.speed < safeSpeed) {
+                isGasPressed = true;
+                gasBtn.classList.add('active-pedal'); 
+            } else {
+                isGasPressed = false;
+                gasBtn.classList.remove('active-pedal'); 
+            }
+        }
+
         if(isGasPressed && !player.courseOut) {
             player.battery -= motor.drain;
             if(player.battery < 0) player.battery = 0;
@@ -1016,8 +1185,6 @@
         
         const currentMaxS = (baseMaxS * batPenalty) + (baseAcc * batPenalty);
         player.speed = Math.max(0, Math.min(player.speed, currentMaxS));
-
-        let pData = getPathPoint(player.progress);
         
         let curveForce = (player.speed * player.speed) * pData.curvature;
         let dangerPct = (curveForce / gripLimit) * 100;
@@ -1026,7 +1193,7 @@
         if(!player.courseOut) {
             document.getElementById('speed-bar').style.width = `${(player.speed/baseMaxS)*100}%`;
             document.getElementById('speed-bar').style.background = barColor;
-            document.getElementById('speed-val').innerHTML= `${Math.floor((player.speed / baseMaxS * currentMaxS) * currentMaxS)} <span style="font-size:0.8rem; color:var(--text-muted)">KM/H</span>`;
+            document.getElementById('speed-val').innerHTML = `${Math.floor((player.speed / baseMaxS * currentMaxS) * currentMaxS)} <span style="font-size:0.8rem; color:var(--text-muted)">KM/H</span>`;
             
             let safeMaxSpeed = Math.sqrt(gripLimit / (pData.curvature + 0.0001));
             let dangerZoneWidth = Math.max(0, 100 - (safeMaxSpeed/baseMaxS)*100);
@@ -1047,30 +1214,41 @@
             player.courseOut = true; player.speed = 0; endGame(false, true);
         }
 
-        let aiPData = getPathPoint(ai.progress);
-        let aiPDataAhead = getPathPoint(ai.progress + (trackWidth*1.5));
-        let maxCurve = Math.max(aiPData.curvature, aiPDataAhead.curvature);
-        
-        let diffMultiplier = state.difficulty === 'easy' ? 0.65 : (state.difficulty === 'medium' ? 0.85 : 0.98);
-        let aiGripLimit = (ai.carData.grip * 6) * 0.9; 
-        let aiSafeSpeed = Math.sqrt(aiGripLimit / (maxCurve + 0.0001)) * diffMultiplier;
-        let aiMaxS = (ai.carData.topSpeed * diffMultiplier) * (trackWidth/80);
-        
-        let aiTargetSpeed = Math.min(aiSafeSpeed, aiMaxS);
-        ai.speed += (aiTargetSpeed - ai.speed) * 0.15;
+        let aiPData;
+        if (state.mode === 'race') {
+            aiPData = getPathPoint(ai.progress);
+            let aiPDataAhead = getPathPoint(ai.progress + (trackWidth*1.5));
+            let maxCurve = Math.max(aiPData.curvature, aiPDataAhead.curvature);
+            
+            let diffMultiplier = state.difficulty === 'easy' ? 0.65 : (state.difficulty === 'medium' ? 0.85 : 0.98);
+            let aiGripLimit = (ai.carData.grip * 6) * 0.9; 
+            let aiSafeSpeed = Math.sqrt(aiGripLimit / (maxCurve + 0.0001)) * diffMultiplier;
+            let aiMaxS = (ai.carData.topSpeed * diffMultiplier) * (trackWidth/80);
+            
+            let aiTargetSpeed = Math.min(aiSafeSpeed, aiMaxS);
+            ai.speed += (aiTargetSpeed - ai.speed) * 0.15;
+        }
 
         if(!player.courseOut) {
             let prevP = player.progress;
             player.progress += player.speed;
             if(prevP % pathLength > (player.progress) % pathLength && player.progress > pathLength/2) {
-                player.lap++; if(player.lap > state.laps) endGame(true, false);
+                player.lap++; 
+                if(player.lap > state.laps) {
+                    endGame(true, false); 
+                }
             }
         }
         
-        let prevA = ai.progress;
-        ai.progress += ai.speed;
-        if(prevA % pathLength > (ai.progress) % pathLength && ai.progress > pathLength/2) {
-            ai.lap++; if(ai.lap > state.laps && isRacing) endGame(false, false);
+        if (state.mode === 'race') {
+            let prevA = ai.progress;
+            ai.progress += ai.speed;
+            if(prevA % pathLength > (ai.progress) % pathLength && ai.progress > pathLength/2) {
+                ai.lap++; 
+                if(ai.lap > state.laps && isRacing) {
+                    endGame(false, false); 
+                }
+            }
         }
 
         // --- RENDER ---
@@ -1086,6 +1264,34 @@
         }
         ctx.strokeStyle = '#1e293b'; ctx.lineWidth = trackWidth + 12; ctx.stroke();
         ctx.strokeStyle = '#0f172a'; ctx.lineWidth = trackWidth; ctx.stroke();
+
+        if(state.track === 'changer') {
+            ctx.beginPath();
+            for(let d = pathLength * 0.45; d <= pathLength * 0.55; d += 2) {
+                let pt = getPathPoint(d);
+                let nx = Math.cos(pt.angle + Math.PI/2), ny = Math.sin(pt.angle + Math.PI/2);
+                if (d === pathLength * 0.45) ctx.moveTo(pt.x + nx*trackWidth/2, pt.y + ny*trackWidth/2);
+                else ctx.lineTo(pt.x + nx*trackWidth/2, pt.y + ny*trackWidth/2);
+            }
+            for(let d = pathLength * 0.55; d >= pathLength * 0.45; d -= 2) {
+                let pt = getPathPoint(d);
+                let nx = Math.cos(pt.angle + Math.PI/2), ny = Math.sin(pt.angle + Math.PI/2);
+                ctx.lineTo(pt.x - nx*trackWidth/2, pt.y - ny*trackWidth/2);
+            }
+            ctx.fillStyle = 'rgba(234, 179, 8, 0.15)'; 
+            ctx.fill();
+            
+            let midP = getPathPoint(pathLength * 0.5);
+            ctx.save();
+            ctx.translate(midP.x, midP.y);
+            ctx.rotate(midP.angle);
+            ctx.fillStyle = 'rgba(234, 179, 8, 0.6)';
+            ctx.font = 'bold 16px Plus Jakarta Sans';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('LANE CHANGER', 0, 0);
+            ctx.restore();
+        }
 
         ctx.beginPath();
         for(let i=0; i<=trackPath.length; i++) {
@@ -1111,30 +1317,38 @@
         }
         ctx.restore();
 
-        let aNx = Math.cos(aiPData.angle + Math.PI/2), aNy = Math.sin(aiPData.angle + Math.PI/2);
-        ctx.save();
-        ctx.translate(aiPData.x + aNx*laneOffset, aiPData.y + aNy*laneOffset); 
-        ctx.rotate(aiPData.angle + Math.PI/2);
-        
-        if(ai.imgObj.complete && ai.imgObj.naturalHeight !== 0) {
-            ctx.rotate(-Math.PI/2);
-            const aspect = ai.imgObj.width / ai.imgObj.height;
-            const drawH = carHeight * 1.5; const drawW = drawH * aspect;
-            ctx.shadowColor = 'rgba(0,0,0,0.5)'; ctx.shadowBlur = 10; ctx.shadowOffsetY = 5;
-            ctx.drawImage(ai.imgObj, -drawW/2, -drawH/2, drawW, drawH);
-        } else {
-            ctx.fillStyle = ai.color; ctx.beginPath(); ctx.roundRect(-carWidth/2, -carHeight/2, carWidth, carHeight, 6); ctx.fill();
-            ctx.fillStyle = '#000'; ctx.fillRect(-carWidth*0.3, -carHeight*0.1, carWidth*0.6, carHeight*0.3);
+        if (state.mode === 'race') {
+            let aTotalDist = (ai.lap - 1) * pathLength + ai.progress;
+            let aiLaneMultiplier = getLaneMultiplier(aTotalDist, 1);
+            
+            let aNx = Math.cos(aiPData.angle + Math.PI/2), aNy = Math.sin(aiPData.angle + Math.PI/2);
+            ctx.save();
+            ctx.translate(aiPData.x + aNx * laneOffset * aiLaneMultiplier, aiPData.y + aNy * laneOffset * aiLaneMultiplier); 
+            ctx.rotate(aiPData.angle + Math.PI/2);
+            
+            if(ai.imgObj.complete && ai.imgObj.naturalHeight !== 0) {
+                ctx.rotate(-Math.PI/2);
+                const aspect = ai.imgObj.width / ai.imgObj.height;
+                const drawH = carHeight * 1.5; const drawW = drawH * aspect;
+                ctx.shadowColor = 'rgba(0,0,0,0.5)'; ctx.shadowBlur = 10; ctx.shadowOffsetY = 5;
+                ctx.drawImage(ai.imgObj, -drawW/2, -drawH/2, drawW, drawH);
+            } else {
+                ctx.fillStyle = ai.color; ctx.beginPath(); ctx.roundRect(-carWidth/2, -carHeight/2, carWidth, carHeight, 6); ctx.fill();
+                ctx.fillStyle = '#000'; ctx.fillRect(-carWidth*0.3, -carHeight*0.1, carWidth*0.6, carHeight*0.3);
+            }
+            ctx.restore();
         }
-        ctx.restore();
 
+        let pTotalDist = (player.lap - 1) * pathLength + player.progress;
+        let playerLaneMultiplier = getLaneMultiplier(pTotalDist, -1);
+        
         let pNx = Math.cos(pData.angle + Math.PI/2), pNy = Math.sin(pData.angle + Math.PI/2);
         ctx.save();
         if(player.courseOut) {
-            ctx.translate(pData.x - pNx*laneOffset + (Math.random()*10-5), pData.y - pNy*laneOffset + (Math.random()*10-5));
+            ctx.translate(pData.x + pNx * laneOffset * playerLaneMultiplier + (Math.random()*10-5), pData.y + pNy * laneOffset * playerLaneMultiplier + (Math.random()*10-5));
             ctx.rotate(pData.angle + Math.PI/2 + Math.random()*0.5); ctx.globalAlpha = 0.6;
         } else {
-            ctx.translate(pData.x - pNx*laneOffset, pData.y - pNy*laneOffset);
+            ctx.translate(pData.x + pNx * laneOffset * playerLaneMultiplier, pData.y + pNy * laneOffset * playerLaneMultiplier);
             ctx.rotate(pData.angle + Math.PI/2);
         }
 
@@ -1156,12 +1370,15 @@
     function updateHUD() {
         document.getElementById('hud-time').innerText = formatTime(elapsedTime);
         document.getElementById('hud-lap').innerText = `LAP: ${Math.min(player.lap, state.laps)}/${state.laps}`;
-        let pTotalDist = (player.lap-1)*pathLength + player.progress;
-        let aTotalDist = (ai.lap-1)*pathLength + ai.progress;
-        let pos = pTotalDist >= aTotalDist ? '1ST' : '2ND';
-        let posEl = document.getElementById('hud-pos');
-        posEl.innerText = `POS: ${pos}`;
-        posEl.style.color = pos === '1ST' ? '#10b981' : '#ef4444';
+        
+        if (state.mode === 'race') {
+            let pTotalDist = (player.lap-1)*pathLength + player.progress;
+            let aTotalDist = (ai.lap-1)*pathLength + ai.progress;
+            let pos = pTotalDist >= aTotalDist ? '1ST' : '2ND';
+            let posEl = document.getElementById('hud-pos');
+            posEl.innerText = `POS: ${pos}`;
+            posEl.style.color = pos === '1ST' ? '#10b981' : '#ef4444';
+        }
     }
 
     window.onload = () => {
@@ -1175,11 +1392,10 @@
   "@type": "VideoGame",
   "name": "Mini Tamiya Game",
   "description": "Game balap Mini 4WD Tamiya online gratis. Main langsung di browser tanpa download.",
-  "url": "https://mini-tamiya-game.vercel.app",
-  "image": "https://mini-tamiya-game.vercel.app/icon/1785274178813.png",
-  "genre": ["Racing", "Arcade"],
-  "operatingSystem": "Web Browser",
-  "inLanguage": "id"
+  "url": "https://mini-tamiya-game.vercel.app/",
+  "genre": ["Racing", "Simulation"],
+  "gamePlatform": "Web Browser",
+  "operatingSystem": "All"
 }
 </script>
 </body>
