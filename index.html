@@ -1617,7 +1617,7 @@
                 if (player.battery < 40) batPenalty = 0.4 + (0.6 * (player.battery / 40));
                 if (player.battery <= 0) batPenalty = 0.2;
 
-                const currentMaxS = baseMaxS * batPenalty;
+                const currentMaxS = (baseMaxS * batPenalty) + (baseAcc * batPenalty);
                 player.speed = Math.max(0, Math.min(player.speed, currentMaxS));
 
                 let curveForce = (player.speed * player.speed) * pData.curvature;
