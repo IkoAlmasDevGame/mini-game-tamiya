@@ -1627,7 +1627,7 @@
                 if (!player.courseOut) {
                     document.getElementById('speed-bar').style.width = `${(player.speed / baseMaxS) * 100}%`;
                     document.getElementById('speed-bar').style.background = barColor;
-                    document.getElementById('speed-val').innerHTML = `${Math.floor((player.speed / baseMaxS * baseAcc) * currentMaxS)} <span style="font-size:0.8rem; color:var(--text-muted)">KM/H</span>`;
+                    document.getElementById('speed-val').innerHTML = `${Math.floor((player.speed / baseMaxS * currentMaxS) * currentMaxS)} <span style="font-size:0.8rem; color:var(--text-muted)">KM/H</span>`;
 
                     let safeMaxSpeed = Math.sqrt(gripLimit / (pData.curvature + 0.0001));
                     let dangerZoneWidth = Math.max(0, 100 - (safeMaxSpeed / baseMaxS) * 100);
